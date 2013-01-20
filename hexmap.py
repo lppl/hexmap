@@ -10,13 +10,20 @@ moves = (( 1, 1),
          ( 0, 1))
 
 class NotRecognizedMoveError(Exception): pass
+class InvalidPointException(Exception): pass
+class PointOutsideOfMapException(Exception): pass
 
 def is_point (a):
     """Checks if a is valid point. 
 
     Points are tuples with two elements wich are integer coordinates
     """
-    return isinstance(a, tuple) and isinstance(a[0], int )and isinstance(a[1], int)
+    return isinstance(a, tuple) and isinstance(a[0], int) and isinstance(a[1], int)
+
+
+def point_guard(a):
+    if not is_point(a): 
+        raise InvalidPointException("Point expected but `%s` given." % a)
 
 def distance (a, b): 
     """Return distance betwen a and b."""
@@ -68,16 +75,58 @@ def move_point(p, m, d=1):
 
 class Field:
     def __init__(self, p):
-        self.p
+        point_guard(p)
+        self.p = p
 
 class HexMapCursor:
+
     def __init__(self, hexmap, p):
         self.hexmap = hexmap
+        self.go_to(p)
+
+    def go_to(self, p):
+        point_guard(p)
         self.p = p
+        return self
+
+    def move(self, m, d=1):
+        self.go_to(move_point(self.p, m, d))
+        return self
+
+    def position(self):
+        return self.p
+
+    def get_field(self):
+        return self.hexmap.get_field(self.p)
+
+    def set_field(self, field):
+        self.hexmap.set_field(self.p, field)
+        return self
+
 
 class HexMap:
     
     fields = {}
 
-    def __init__(self, size):
+    def __init__(self, center=(0,0), size=9):
+        point_guard(center)
+        self.center = center
         self.size = size
+
+    def get_cursor(self, p=None):
+        return HexMapCursor(self, p if is_point(p) else self.center)
+
+    def set_field(self, p, field):
+        self.__map_point_guard(p)
+        self.fields[p] = field
+
+    def get_field(self, p):
+        self.__map_point_guard(p)
+        return self.fields[p] if p in self.fields else None
+
+    def __map_point_guard(self, p):
+        point_guard(p)
+        if not in_distance(self.center, p, self.size - 1):
+            raise PointOutsideOfMapException(
+                "Point %s exists outside of map center: %s, size: %s" % 
+                (p, self.center, self.size))

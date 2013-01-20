@@ -67,6 +67,7 @@ from hexmap import is_point, distance, in_distance
 from hexmap import num_points_in_circle, num_points_in_distance
 from hexmap import points_in_circle, points_in_distance
 from hexmap import move_point, NotRecognizedMoveError
+from hexmap import Field, HexMap, HexMapCursor
 
 
 def test_is_point():
@@ -147,6 +148,38 @@ def test_moves():
         move_point((-2,-1), "s", 1)
     with pytest.raises(NotRecognizedMoveError):
         move_point((-2,-1), "n", 1)
+
+@pytest.fixture
+def hx():
+    return HexMap(CENTER, 20)
+
+def test_Field():
+    f = Field(CENTER)
+
+def test_HexMapCursor(hx):
+    cursor = hx.get_cursor(A)
+    assert A == cursor.position()
+    assert (-1, 0) == cursor.go_to((-2,-1)).move("e",  1).position()
+    assert (-1,-1) == cursor.go_to((-2,-1)).move("se", 1).position()
+    assert (-2,-2) == cursor.go_to((-2,-1)).move("sw", 1).position()
+    assert (-3,-2) == cursor.go_to((-2,-1)).move("w",  1).position()
+    assert (-3,-1) == cursor.go_to((-2,-1)).move("nw", 1).position()
+    assert (-2, 0) == cursor.go_to((-2,-1)).move("ne", 1).position()
+    
+    fa = Field(A)
+    fb = Field(B)
+    fc = Field(C)
+    assert fa == cursor.go_to(A).set_field(fa).get_field()
+    assert fb == cursor.go_to(B).set_field(fb).get_field()
+    assert fc == cursor.go_to(C).set_field(fc).get_field()
+
+    raise Exception("Need more tests")
+
+def test_HexMap():
+    hx = HexMap()
+    assert isinstance(hx.get_cursor(), HexMapCursor)
+    assert hx.get_cursor() != hx.get_cursor()
+    raise Exception("Need more tests")
 
 
 if __name__ == '__main__':
