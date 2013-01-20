@@ -43,11 +43,11 @@ def points_in_circle (c, d):
     if d == 0:
         return set((c,))
     circle = set()
-    last = (c[0] + d*moves[4][0], c[1] + d*moves[4][1])
+    x, y = (c[0] + d*moves[4][0], c[1] + d*moves[4][1])
     for m in moves:
         for i in range(1, d+1):
-            last = (last[0] + m[0], last[1] + m[1])
-            circle.add(last)
+            x, y = x + m[0], y + m[1]
+            circle.add((x, y))
     return circle
 
 def points_in_distance (c, d):
