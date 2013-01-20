@@ -64,3 +64,20 @@ def move_point(p, m, d=1):
     x, y = p
     dx, dy = moves[orientation.index(m)]
     return (x + dx, y + dy)
+
+
+class Field:
+    def __init__(self, p):
+        self.p
+
+class HexMapCursor:
+    def __init__(self, hexmap, p):
+        self.hexmap = hexmap
+        self.p = p
+
+class HexMap:
+    
+    fields = {}
+
+    def __init__(self, size):
+        self.size = size
