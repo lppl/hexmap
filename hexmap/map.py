@@ -4,12 +4,16 @@ orientation_sn = ("n", "ne", "se", "s", "sw", "nw")
 orientation_we = ("e", "se", "sw", "w", "nw", "ne")
 orientation = orientation_we
 
-class PointOutsideOfMapException(Exception): pass
+
+class PointOutsideOfMapException(Exception):
+    pass
+
 
 class Field:
     def __init__(self, p):
         point_guard(p)
         self.p = p
+
 
 class HexMapCursor:
 
@@ -39,10 +43,10 @@ class HexMapCursor:
 
 
 class HexMap:
-    
+
     fields = {}
 
-    def __init__(self, center=(0,0), size=9, orientation=orientation):
+    def __init__(self, center=(0, 0), size=9, orientation=orientation):
         point_guard(center)
         self.center = center
         self.size = size
@@ -66,5 +70,5 @@ class HexMap:
         point_guard(p)
         if not in_distance(self.center, p, self.size - 1):
             raise PointOutsideOfMapException(
-                "Point %s exists outside of map center: %s, size: %s" % 
+                "Point %s exists outside of map center: %s, size: %s" %
                 (p, self.center, self.size))
